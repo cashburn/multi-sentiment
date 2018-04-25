@@ -3,6 +3,7 @@ import math
 import csv
 import sys
 import pandas as pd
+import numpy as np
 from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.feature_extraction.text import TfidfTransformer
 from sklearn.naive_bayes import GaussianNB
@@ -22,14 +23,19 @@ X_train_counts = count_vect.transform(train['text'])
 X_test_tfidf = tfidf_transformer.fit_transform(X_test_counts)
 X_train_tfidf = tfidf_transformer.fit_transform(X_train_counts)
 
-#clf = SVC(gamma=0.001, C=100.)
-#clf.fit(X_train_counts, train['sentiment'])
-clf = LogisticRegression()
+clf = SVC(gamma=0.001, C=100.)
 clf.fit(X_train_counts, train['sentiment'])
+clf_log = LogisticRegression()
+clf_log.fit(X_train_counts, train['sentiment'])
 score = clf.score(X_train_counts, train['sentiment'])
-print(score)
 
 predicted = clf.predict(X_test_counts)
+predicted_log = clf_log.predict(X_test_counts)
+
+print('Diff')
+for i in range(0,len(predicted)):
+    if predicted[i] != predicted_log[i]:
+        print(i)
 
 thefile = open('output.csv', 'w')
 thefile.write('id,sentiment\n')
